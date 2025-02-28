@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import TaskForm from "./TaskForm"; // ฟอร์มที่ใช้เพิ่มและแก้ไข task
 
-const TaskTable = ({ onEdit }) => {
+const TaskTable = () => {
   const [tasks, setTasks] = useState([]);
-  
+  const [editTask, setEditTask] = useState(null);
+
   // ฟังก์ชันเพื่อดึงข้อมูล tasks
   useEffect(() => {
     fetch("http://localhost:5000/tasks")
@@ -23,7 +25,7 @@ const TaskTable = ({ onEdit }) => {
       }
 
       // รีเฟรชการแสดงผลหลังจากลบ task
-      setTasks(tasks.filter(task => task.id !== taskId));
+      setTasks(tasks.filter((task) => task.id !== taskId));
 
       alert("Task deleted successfully!");
     } catch (error) {
@@ -32,73 +34,76 @@ const TaskTable = ({ onEdit }) => {
     }
   };
 
+  // ฟังก์ชันสำหรับการเลือก task แก้ไข
+  const handleEdit = (task) => {
+    setEditTask(task); // ตั้งค่า task ที่ต้องการแก้ไข
+  };
+
+  // ฟังก์ชันที่รับจากฟอร์มเมื่อบันทึกการแก้ไข
+  const handleSave = () => {
+    // รีเฟรชการดึงข้อมูลเมื่อบันทึกการแก้ไข
+    fetch("http://localhost:5000/tasks")
+      .then((res) => res.json())
+      .then((data) => setTasks(data));
+    setEditTask(null); // ปิดฟอร์มแก้ไข
+  };
+
   return (
-    <div className="container">
+    <div>
       <h2>Task List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Due Date</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.id}</td>
-                <td>{task.title}</td>
-                <td>{task.description}</td>
-                <td>
-                  <select
-                    value={task.status}
-                    onChange={(e) => onEdit({ ...task, status: e.target.value })}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                  </select>
-                </td>
-                <td>
-                  <input
-                    type="date"
-                    value={task.due_date}
-                    onChange={(e) => onEdit({ ...task, due_date: e.target.value })}
-                  />
-                </td>
-                <td>{task.createdAt}</td>
-                <td>{task.updatedAt}</td>
-                <td>
-                  <button
-                    className="update"
-                    onClick={() => onEdit(task)} // เรียกใช้ฟังก์ชันแก้ไข
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="delete"
-                    onClick={() => handleDelete(task.id)} // เรียกใช้ฟังก์ชันลบ
-                  >
-                    Delete
-                  </button>
+      {editTask ? (
+        <TaskForm taskToEdit={editTask} onSave={handleSave} />
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.id}</td>
+                  <td>{task.title}</td>
+                  <td>{task.description}</td>
+                  <td>{task.status}</td>
+                  <td>{task.due_date}</td>
+                  <td>{task.createdAt}</td>
+                  <td>{task.updatedAt}</td>
+                  <td>
+                    <button
+                      className="update"
+                      onClick={() => handleEdit(task)} // เรียกใช้ handleEdit เพื่อแก้ไข task
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete"
+                      onClick={() => handleDelete(task.id)} // เรียกใช้ handleDelete เพื่อลบ task
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center", color: "#888" }}>
+                  No tasks found
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" style={{ textAlign: "center", color: "#888" }}>
-                No tasks found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+/* ตั้งค่า Font ทั่วไป */
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #f4f4f9;
@@ -5,6 +6,7 @@ body {
   padding: 0;
 }
 
+/* ส่วน Container */
 .container {
   width: 80%;
   margin: 20px auto;
@@ -14,57 +16,91 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
+
+/* ส่วนฟอร์ม task */
 .task-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  background: #fff;
   padding: 20px;
-  background: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  margin: 20px auto;
 }
 
+.task-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ฟอร์ม */
 .task-form form {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 400px;
 }
 
-.task-form input {
+.task-form form div {
+  margin-bottom: 15px;
+}
+
+.task-form label {
+  font-weight: bold;
+}
+
+/* ฟิลด์ input, select, textarea */
+.task-form input,
+.task-form select,
+.task-form textarea {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   width: 100%;
+}
+
+/* ปุ่ม */
+.task-form button {
+  background-color: #28a745; /* ปรับเป็นสีเขียว */
+  color: white;
   padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.form-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+.task-form button:hover {
+  background-color: #218838; /* ปรับเป็นสีเขียวเข้มเมื่อ hover */
 }
 
+/* ปรับสีปุ่ม delete */
+button.delete {
+  background-color: #dc3545; /* สีแดงสำหรับปุ่มลบ */
+}
+
+button.delete:hover {
+  background-color: #c82333; /* สีแดงเข้มเมื่อ hover */
+}
+
+/* ฟอร์มปุ่มทั่วไป */
 button {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
   cursor: pointer;
   transition: 0.3s;
-  background-color: #007bff;
+  background-color: #28a745; /* ปรับเป็นสีเขียว */
   color: white;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #218838; /* ปรับเป็นสีเขียวเข้มเมื่อ hover */
 }
 
-
+/* สีหัวข้อ */
 h1, h2 {
   color: #333;
 }
 
+/* ตาราง */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -78,7 +114,7 @@ th, td {
 }
 
 th {
-  background-color: #007bff;
+  background-color: #28a745; /* ปรับเป็นสีเขียว */
   color: white;
 }
 
@@ -86,6 +122,7 @@ tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
+/* ฟิลด์ input และปุ่ม */
 input, button {
   padding: 10px;
   margin: 10px;
@@ -98,21 +135,11 @@ input {
   padding: 8px;
 }
 
-button {
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
+/* ปรับปุ่ม delete */
 button.delete {
-  background-color: #dc3545;
+  background-color: #dc3545; /* สีแดงสำหรับปุ่มลบ */
 }
 
 button.delete:hover {
-  background-color: #c82333;
+  background-color: #c82333; /* สีแดงเข้มเมื่อ hover */
 }
