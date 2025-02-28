@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const TaskTable = ({ onEdit }) => {
+const TaskTable = ({ onEdit, onTaskDeleted }) => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -8,7 +8,21 @@ const TaskTable = ({ onEdit }) => {
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error("Error fetching tasks:", err));
-  }, []);
+  }, [onTaskDeleted]); // อัปเดตเมื่อมีการลบ Task
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        onTaskDeleted();
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
 
   return (
     <div className="container">
@@ -33,7 +47,7 @@ const TaskTable = ({ onEdit }) => {
                 <td>{task.status}</td>
                 <td>
                   <button className="update" onClick={() => onEdit(task)}>Edit</button>
-                  <button className="delete">Delete</button>
+                  <button className="delete" onClick={() => handleDelete(task.id)}>Delete</button>
                 </td>
               </tr>
             ))

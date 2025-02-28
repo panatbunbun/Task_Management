@@ -10,7 +10,8 @@ const Home = () => {
     <div className="container">
       <h1>Task Management System</h1>
       <TaskForm onTaskAdded={() => setReload(!reload)} taskToEdit={taskToEdit} setTaskToEdit={setTaskToEdit} />
-      <TaskTable key={reload} onEdit={setTaskToEdit} />
+      <TaskTable key={reload} onEdit={setTaskToEdit} onTaskDeleted={() => setReload(!reload)} />
+      
     </div>
   );
 };
