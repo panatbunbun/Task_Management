@@ -1,32 +1,49 @@
 import { useState, useEffect } from "react";
-import TaskForm from "./TaskForm"; // ฟอร์มที่ใช้เพิ่มและแก้ไข task
+import TaskForm from "./TaskForm";
+
+// แปลงวันที่ให้อ่านง่าย (ภาษาอังกฤษ)
+const formatDateTime = (isoString) => {
+  if (!isoString) return "-";
+  const date = new Date(isoString);
+  return (
+    date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }) +
+    " at " +
+    date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+  );
+};
 
 const TaskTable = () => {
   const [tasks, setTasks] = useState([]);
   const [editTask, setEditTask] = useState(null);
 
-  // ฟังก์ชันเพื่อดึงข้อมูล tasks
-  useEffect(() => {
+  const fetchTasks = () => {
     fetch("http://localhost:5000/tasks")
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error("Error fetching tasks:", err));
+  };
+
+  useEffect(() => {
+    fetchTasks();
   }, []);
 
-  // ฟังก์ชันสำหรับการลบ task
   const handleDelete = async (taskId) => {
     try {
       const response = await fetch(`http://localhost:5000/tasks/${taskId}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to delete task");
-      }
+      if (!response.ok) throw new Error("Failed to delete task");
 
-      // รีเฟรชการแสดงผลหลังจากลบ task
       setTasks(tasks.filter((task) => task.id !== taskId));
-
       alert("Task deleted successfully!");
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -34,25 +51,28 @@ const TaskTable = () => {
     }
   };
 
-  // ฟังก์ชันสำหรับการเลือก task แก้ไข
   const handleEdit = (task) => {
-    setEditTask(task); // ตั้งค่า task ที่ต้องการแก้ไข
+    setEditTask(task);
   };
 
-  // ฟังก์ชันที่รับจากฟอร์มเมื่อบันทึกการแก้ไข
   const handleSave = () => {
-    // รีเฟรชการดึงข้อมูลเมื่อบันทึกการแก้ไข
-    fetch("http://localhost:5000/tasks")
-      .then((res) => res.json())
-      .then((data) => setTasks(data));
-    setEditTask(null); // ปิดฟอร์มแก้ไข
+    fetchTasks();
+    setEditTask(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditTask(null);
   };
 
   return (
     <div>
       <h2>Task List</h2>
       {editTask ? (
-        <TaskForm taskToEdit={editTask} onSave={handleSave} />
+        <TaskForm
+          taskToEdit={editTask}
+          onSave={handleSave}
+          onCancel={handleCancelEdit}
+        />
       ) : (
         <table>
           <thead>
@@ -61,7 +81,6 @@ const TaskTable = () => {
               <th>Title</th>
               <th>Description</th>
               <th>Status</th>
-              <th>Due Date</th>
               <th>Created At</th>
               <th>Updated At</th>
               <th>Actions</th>
@@ -75,20 +94,13 @@ const TaskTable = () => {
                   <td>{task.title}</td>
                   <td>{task.description}</td>
                   <td>{task.status}</td>
-                  <td>{task.due_date}</td>
-                  <td>{task.createdAt}</td>
-                  <td>{task.updatedAt}</td>
+                  <td>{formatDateTime(task.createdAt)}</td>
+                  <td>{formatDateTime(task.updatedAt)}</td>
                   <td>
-                    <button
-                      className="update"
-                      onClick={() => handleEdit(task)} // เรียกใช้ handleEdit เพื่อแก้ไข task
-                    >
+                    <button className="update" onClick={() => handleEdit(task)}>
                       Edit
                     </button>
-                    <button
-                      className="delete"
-                      onClick={() => handleDelete(task.id)} // เรียกใช้ handleDelete เพื่อลบ task
-                    >
+                    <button className="delete" onClick={() => handleDelete(task.id)}>
                       Delete
                     </button>
                   </td>
@@ -96,7 +108,7 @@ const TaskTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" style={{ textAlign: "center", color: "#888" }}>
+                <td colSpan="7" style={{ textAlign: "center", color: "#888" }}>
                   No tasks found
                 </td>
               </tr>
